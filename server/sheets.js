@@ -9,6 +9,13 @@ const LOGS_HEADERS = [
 ];
 const WORKERS_HEADERS = ['id', 'name'];
 
+const LOGS_DISPLAY_HEADERS = [
+  'ID', '일자', '품명', '구분', '작업내용',
+  '시작시간', '종료시간', '총시간(시)', '총시간(분)',
+  '작업자', '제조번호', '제조일자', '비고', '작성일시'
+];
+const WORKERS_DISPLAY_HEADERS = ['ID', '작업자명'];
+
 let _client = null;
 
 async function getClient() {
@@ -22,7 +29,7 @@ async function getClient() {
   return _client;
 }
 
-async function ensureSheet(client, sheetName, headers) {
+async function ensureSheet(client, sheetName, headers, displayHeaders) {
   const meta = await client.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
   const exists = meta.data.sheets.some(s => s.properties.title === sheetName);
   if (!exists) {
@@ -30,19 +37,20 @@ async function ensureSheet(client, sheetName, headers) {
       spreadsheetId: SPREADSHEET_ID,
       requestBody: { requests: [{ addSheet: { properties: { title: sheetName } } }] },
     });
-    await client.spreadsheets.values.update({
-      spreadsheetId: SPREADSHEET_ID,
-      range: `${sheetName}!A1`,
-      valueInputOption: 'RAW',
-      requestBody: { values: [headers] },
-    });
   }
+  // 항상 한국어 헤더로 첫 행 업데이트
+  await client.spreadsheets.values.update({
+    spreadsheetId: SPREADSHEET_ID,
+    range: `${sheetName}!A1`,
+    valueInputOption: 'RAW',
+    requestBody: { values: [displayHeaders || headers] },
+  });
 }
 
 async function init() {
   const client = await getClient();
-  await ensureSheet(client, 'logs', LOGS_HEADERS);
-  await ensureSheet(client, 'workers', WORKERS_HEADERS);
+  await ensureSheet(client, 'logs', LOGS_HEADERS, LOGS_DISPLAY_HEADERS);
+  await ensureSheet(client, 'workers', WORKERS_HEADERS, WORKERS_DISPLAY_HEADERS);
 }
 
 async function getAllRows(sheetName, headers) {
