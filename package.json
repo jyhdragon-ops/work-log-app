@@ -9,7 +9,7 @@
     "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
     "build": "npm --prefix client install && npm --prefix client run build",
     "postinstall": "npm --prefix server install",
-    "start": "NODE_ENV=production node server/index.js"
+    "start": "NODE_ENV=production node --experimental-sqlite server/index.js"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
