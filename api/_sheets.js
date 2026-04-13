@@ -20,7 +20,9 @@ let _client = null;
 
 async function getClient() {
   if (_client) return _client;
-  const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+  const raw = process.env.GOOGLE_CREDENTIALS;
+  const json = raw.trim().startsWith('{') ? raw : Buffer.from(raw, 'base64').toString('utf8');
+  const credentials = JSON.parse(json);
   const auth = new google.auth.GoogleAuth({
     credentials,
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
