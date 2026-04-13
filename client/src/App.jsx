@@ -96,7 +96,7 @@ function FormPage({ workers, onSaved }) {
         <div className="field">
           <label>구분</label>
           <div className="chip-grid">
-            {['문서','생산','칭량','입고','불출','반납','기타'].map(cat => (
+            {['문서','생산','칭량','입고','불출','반납','기타','청소'].map(cat => (
               <button type="button" key={cat}
                 className={`chip ${form.category === cat ? 'active' : ''}`}
                 onClick={() => setField('category', form.category === cat ? '' : cat)}>
@@ -398,11 +398,53 @@ function WorkersPage({ workers, onChanged }) {
   )
 }
 
+// ─── PIN 모달 ─────────────────────────────────────────────
+function PinModal({ onSuccess, onClose }) {
+  const [pin, setPin] = useState('')
+  const [err, setErr] = useState(false)
+
+  function check() {
+    if (pin === '1809') {
+      onSuccess()
+    } else {
+      setErr(true)
+      setPin('')
+      setTimeout(() => setErr(false), 1500)
+    }
+  }
+
+  return (
+    <div className="pin-overlay" onClick={onClose}>
+      <div className="pin-modal" onClick={e => e.stopPropagation()}>
+        <h3>관리자 인증</h3>
+        <input
+          type="password"
+          inputMode="numeric"
+          maxLength={4}
+          value={pin}
+          onChange={e => setPin(e.target.value.replace(/\D/g, ''))}
+          onKeyDown={e => e.key === 'Enter' && check()}
+          placeholder="PIN 4자리 입력"
+          autoFocus
+          className={err ? 'pin-input error' : 'pin-input'}
+        />
+        {err && <p className="pin-err">비밀번호가 틀렸습니다.</p>}
+        <div className="pin-btns">
+          <button onClick={check} className="btn-primary">확인</button>
+          <button onClick={onClose} className="btn-secondary">취소</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── 앱 루트 ─────────────────────────────────────────────
 export default function App() {
   const [tab, setTab] = useState('form')
   const [workers, setWorkers] = useState([])
   const [refreshKey, setRefreshKey] = useState(0)
+  const [showPin, setShowPin] = useState(false)
+  const [adminUnlocked, setAdminUnlocked] = useState(false)
 
   async function loadWorkers() {
     try {
@@ -415,10 +457,17 @@ export default function App() {
 
   useEffect(() => { loadWorkers() }, [])
 
+  function handleWorkersTab() {
+    if (adminUnlocked) {
+      setTab('workers')
+    } else {
+      setShowPin(true)
+    }
+  }
+
   const tabs = [
     { id: 'form',    label: '일지 작성' },
     { id: 'view',    label: '일지 조회' },
-    { id: 'workers', label: '작업자 관리' },
   ]
 
   return (
@@ -436,7 +485,19 @@ export default function App() {
             {t.label}
           </button>
         ))}
+        <button
+          className={`nav-btn ${tab === 'workers' ? 'active' : ''}`}
+          onClick={handleWorkersTab}>
+          작업자 관리
+        </button>
       </nav>
+
+      {showPin && (
+        <PinModal
+          onSuccess={() => { setAdminUnlocked(true); setShowPin(false); setTab('workers') }}
+          onClose={() => setShowPin(false)}
+        />
+      )}
 
       <main className="app-main">
         {tab === 'form' && (
@@ -445,7 +506,7 @@ export default function App() {
         {tab === 'view' && (
           <ViewPage workers={workers} refreshKey={refreshKey} />
         )}
-        {tab === 'workers' && (
+        {tab === 'workers' && adminUnlocked && (
           <WorkersPage workers={workers} onChanged={loadWorkers} />
         )}
       </main>

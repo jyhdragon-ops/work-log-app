@@ -286,6 +286,40 @@ tr:hover td { background: #f8fafc; }
 .worker-name { flex: 1; font-weight: 500; }
 .empty-item { color: var(--text-muted); padding: 20px; text-align: center; }
 
+/* ── PIN 모달 ───────────────────────────────────────── */
+.pin-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+}
+.pin-modal {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  width: 280px;
+  display: flex; flex-direction: column; gap: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  text-align: center;
+}
+.pin-modal h3 { font-size: 17px; font-weight: 700; }
+.pin-input {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  font-size: 20px; text-align: center; letter-spacing: 6px;
+  outline: none; transition: border-color 0.2s;
+}
+.pin-input:focus { border-color: var(--primary); }
+.pin-input.error { border-color: var(--danger); animation: shake 0.3s; }
+.pin-err { color: var(--danger); font-size: 13px; }
+.pin-btns { display: flex; gap: 8px; }
+.pin-btns button { flex: 1; }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
 /* ── Desktop overrides ──────────────────────────────── */
 @media (min-width: 768px) {
   .app-header { padding: 14px 28px; }
