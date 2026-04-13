@@ -11,6 +11,10 @@
     "postinstall": "npm --prefix server install",
     "start": "NODE_ENV=production node --experimental-sqlite server/index.js"
   },
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "googleapis": "^144.0.0"
+  },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }
