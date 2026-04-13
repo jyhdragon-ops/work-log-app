@@ -1,10 +1,17 @@
 const { DatabaseSync } = require('node:sqlite');
 const path = require('path');
+const fs = require('fs');
 
 // 배포 환경에서는 DATA_DIR 환경변수로 경로 지정 (Railway volume 등)
 const dbPath = process.env.DATA_DIR
   ? path.join(process.env.DATA_DIR, 'worklog.db')
   : path.join(__dirname, 'worklog.db');
+
+// DB 파일이 위치할 디렉토리가 없으면 생성
+const dbDir = path.dirname(dbPath);
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
 
 const db = new DatabaseSync(dbPath);
 
