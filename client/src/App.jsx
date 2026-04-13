@@ -11,11 +11,21 @@ function thisMonthStart() {
 
 function calcTime(start, end) {
   if (!start || !end) return { hours: 0, minutes: 0 }
-  const [sh, sm] = start.split(':').map(Number)
-  const [eh, em] = end.split(':').map(Number)
+  const sp = start.split(':'), ep = end.split(':')
+  if (sp.length < 2 || ep.length < 2) return { hours: 0, minutes: 0 }
+  const [sh, sm] = sp.map(Number)
+  const [eh, em] = ep.map(Number)
+  if (isNaN(sh)||isNaN(sm)||isNaN(eh)||isNaN(em)) return { hours: 0, minutes: 0 }
   const total = (eh * 60 + em) - (sh * 60 + sm)
   if (total <= 0) return { hours: 0, minutes: 0 }
   return { hours: Math.floor(total / 60), minutes: total % 60 }
+}
+
+// 시간 자동 포맷: 숫자 4자리 입력시 자동으로 : 삽입
+function formatTimeInput(val) {
+  const digits = val.replace(/\D/g, '')
+  if (digits.length <= 2) return digits
+  return digits.slice(0, 2) + ':' + digits.slice(2, 4)
 }
 
 // ─── 일지 작성 ───────────────────────────────────────────
@@ -85,9 +95,15 @@ function FormPage({ workers, onSaved }) {
 
         <div className="field">
           <label>구분</label>
-          <input type="text" value={form.category}
-            onChange={e => setField('category', e.target.value)}
-            placeholder="불출 / 칭량 / 입고 / 반납 등" />
+          <div className="chip-grid">
+            {['문서','생산','칭량','입고','불출','반납','기타'].map(cat => (
+              <button type="button" key={cat}
+                className={`chip ${form.category === cat ? 'active' : ''}`}
+                onClick={() => setField('category', form.category === cat ? '' : cat)}>
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="field">
@@ -100,13 +116,15 @@ function FormPage({ workers, onSaved }) {
         <div className="field-row">
           <div className="field">
             <label>시작 시간</label>
-            <input type="time" value={form.start_time}
-              onChange={e => setField('start_time', e.target.value)} />
+            <input type="text" inputMode="numeric" value={form.start_time}
+              onChange={e => setField('start_time', formatTimeInput(e.target.value))}
+              placeholder="0900 → 09:00" maxLength={5} />
           </div>
           <div className="field">
             <label>종료 시간</label>
-            <input type="time" value={form.end_time}
-              onChange={e => setField('end_time', e.target.value)} />
+            <input type="text" inputMode="numeric" value={form.end_time}
+              onChange={e => setField('end_time', formatTimeInput(e.target.value))}
+              placeholder="1800 → 18:00" maxLength={5} />
           </div>
         </div>
 
@@ -198,8 +216,8 @@ function EditRow({ log, onSave, onCancel }) {
       <td><input value={form.product_name} onChange={e => set('product_name', e.target.value)} /></td>
       <td><input value={form.category} onChange={e => set('category', e.target.value)} /></td>
       <td><input value={form.work_content} onChange={e => set('work_content', e.target.value)} /></td>
-      <td><input type="time" value={form.start_time} onChange={e => set('start_time', e.target.value)} /></td>
-      <td><input type="time" value={form.end_time} onChange={e => set('end_time', e.target.value)} /></td>
+      <td><input type="text" inputMode="numeric" placeholder="09:00" maxLength={5} value={form.start_time} onChange={e => set('start_time', e.target.value)} /></td>
+      <td><input type="text" inputMode="numeric" placeholder="18:00" maxLength={5} value={form.end_time} onChange={e => set('end_time', e.target.value)} /></td>
       <td className="center">{t.hours}</td>
       <td className="center">{t.minutes}</td>
       <td><input value={form.worker} onChange={e => set('worker', e.target.value)} /></td>
