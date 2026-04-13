@@ -96,7 +96,7 @@ function FormPage({ workers, onSaved }) {
         <div className="field">
           <label>구분</label>
           <div className="chip-grid">
-            {['문서','생산','칭량','입고','불출','반납','기타','청소'].map(cat => (
+            {['생산','청소','문서','칭량','입고','불출','반납','기타'].map(cat => (
               <button type="button" key={cat}
                 className={`chip ${form.category === cat ? 'active' : ''}`}
                 onClick={() => setField('category', form.category === cat ? '' : cat)}>
