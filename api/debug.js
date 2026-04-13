@@ -20,6 +20,6 @@ module.exports = async function handler(req, res) {
     const meta = await client.spreadsheets.get({ spreadsheetId });
     res.json({ ok: true, spreadsheetId, sheets: meta.data.sheets.map(s => s.properties.title) });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: e.message, spreadsheetId: process.env.SPREADSHEET_ID });
   }
 };
