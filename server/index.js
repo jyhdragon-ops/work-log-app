@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const sheets = require('./sheets');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -10,6 +11,8 @@ app.use(express.json());
 
 app.use('/api/logs', require('./routes/logs'));
 app.use('/api/workers', require('./routes/workers'));
+
+sheets.init().catch(err => console.error('Sheets 초기화 오류:', err));
 
 // Production: serve React build
 if (process.env.NODE_ENV === 'production') {
