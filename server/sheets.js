@@ -4,14 +4,14 @@ const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 
 const LOGS_HEADERS = [
   'id', 'date', 'product_name', 'category', 'work_content',
-  'start_time', 'end_time', 'total_hours', 'total_minutes',
+  'start_time', 'end_time', 'total_hours', 'total_minutes', 'total_minutes_combined',
   'worker', 'lot_number', 'manufacture_date', 'notes', 'created_at'
 ];
 const WORKERS_HEADERS = ['id', 'name'];
 
 const LOGS_DISPLAY_HEADERS = [
   'ID', '일자', '품명', '구분', '작업내용',
-  '시작시간', '종료시간', '총시간(시)', '총시간(분)',
+  '시작시간', '종료시간', '총시간(시)', '총시간(분)', '총시간(합계분)',
   '작업자', '제조번호', '제조일자', '비고', '작성일시'
 ];
 const WORKERS_DISPLAY_HEADERS = ['ID', '작업자명'];
