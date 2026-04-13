@@ -1,0 +1,299 @@
+/* ── Reset & Base ───────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --warning: #d97706;
+  --bg: #f1f5f9;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --radius: 10px;
+  --shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+html, body { height: 100%; background: var(--bg); color: var(--text); }
+body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-size: 15px; line-height: 1.5; }
+
+/* ── App Shell ──────────────────────────────────────── */
+.app { display: flex; flex-direction: column; min-height: 100dvh; }
+
+.app-header {
+  background: var(--primary);
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+}
+.app-header h1 { font-size: 18px; font-weight: 700; }
+.header-icon { font-size: 20px; }
+
+.app-nav {
+  display: flex;
+  background: #fff;
+  border-bottom: 2px solid var(--border);
+  position: sticky;
+  top: 52px;
+  z-index: 99;
+}
+.nav-btn {
+  flex: 1;
+  padding: 12px 6px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+.nav-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
+.nav-btn:hover:not(.active) { background: var(--bg); color: var(--text); }
+
+.app-main { flex: 1; }
+
+/* ── Page ───────────────────────────────────────────── */
+.page { max-width: 680px; margin: 0 auto; padding: 20px 16px 40px; }
+.page-view { max-width: 100%; padding: 20px 12px 40px; }
+.page-title { font-size: 18px; font-weight: 700; margin-bottom: 18px; color: var(--text); }
+
+/* ── Form ───────────────────────────────────────────── */
+.form { display: flex; flex-direction: column; gap: 14px; }
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+.req { color: var(--danger); }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+input[type="text"],
+input[type="date"],
+input[type="time"],
+textarea,
+select {
+  width: 100%;
+  padding: 12px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px; /* iOS 16px 미만 시 자동 확대 방지 */
+  font-family: inherit;
+  background: #fff;
+  color: var(--text);
+  transition: border-color 0.15s;
+  -webkit-appearance: none;
+  min-height: 48px; /* 터치 최소 높이 */
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+textarea { resize: vertical; min-height: 72px; }
+
+.time-badge {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--primary-dark);
+}
+.time-sub { color: var(--text-muted); font-size: 13px; }
+
+.hint { font-size: 13px; color: var(--text-muted); }
+
+/* ── Worker Chips ───────────────────────────────────── */
+.chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--text);
+}
+.chip.active { background: var(--primary); border-color: var(--primary); color: #fff; font-weight: 600; }
+.chip:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+
+/* ── Buttons ────────────────────────────────────────── */
+.btn-primary {
+  padding: 13px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-top: 4px;
+}
+.btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-secondary {
+  padding: 9px 14px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+
+.btn-excel {
+  padding: 9px 14px;
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-excel:hover { background: #15803d; }
+
+.btn-sm {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn-edit  { background: #eff6ff; color: var(--primary); }
+.btn-edit:hover { background: #dbeafe; }
+.btn-save  { background: #dcfce7; color: var(--success); }
+.btn-save:hover { background: #bbf7d0; }
+.btn-delete { background: #fef2f2; color: var(--danger); }
+.btn-delete:hover { background: #fee2e2; }
+.btn-cancel { background: #f8fafc; color: var(--text-muted); }
+.btn-cancel:hover { background: var(--bg); }
+
+/* ── Toast ──────────────────────────────────────────── */
+.toast {
+  padding: 11px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.toast.success { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+.toast.error   { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+/* ── Filter Bar ─────────────────────────────────────── */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 14px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+.filter-bar input, .filter-bar select { flex: 1; min-width: 120px; margin: 0; }
+.filter-sep { color: var(--text-muted); font-size: 14px; }
+
+/* ── Table ──────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; }
+thead { background: #f8fafc; }
+th {
+  padding: 10px 10px;
+  text-align: left;
+  font-weight: 700;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #f8fafc; }
+.nowrap { white-space: nowrap; }
+.center { text-align: center; }
+
+.empty-cell { text-align: center; padding: 40px; color: var(--text-muted); }
+
+.edit-row td { background: #fffbeb !important; padding: 6px 6px; }
+.edit-row input { padding: 5px 7px; font-size: 13px; min-width: 80px; }
+
+.action-cell { display: flex; gap: 4px; white-space: nowrap; }
+
+.count-bar {
+  padding: 8px 2px;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.loading { text-align: center; padding: 40px; color: var(--text-muted); }
+
+/* ── Workers Page ───────────────────────────────────── */
+.add-worker-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.add-worker-form input { flex: 1; }
+.add-worker-form .btn-primary { padding: 10px 20px; margin: 0; font-size: 15px; white-space: nowrap; }
+
+.worker-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.worker-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+.worker-num {
+  width: 26px;
+  height: 26px;
+  background: var(--bg);
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.worker-name { flex: 1; font-weight: 500; }
+.empty-item { color: var(--text-muted); padding: 20px; text-align: center; }
+
+/* ── Desktop overrides ──────────────────────────────── */
+@media (min-width: 768px) {
+  .app-header { padding: 14px 28px; }
+  .app-header h1 { font-size: 20px; }
+  .nav-btn { font-size: 15px; padding: 14px 24px; flex: none; }
+  .page { padding: 28px 24px 60px; }
+  .page-view { padding: 28px 20px 60px; }
+  .filter-bar input, .filter-bar select { flex: none; min-width: unset; }
+  table { font-size: 14px; }
+  th, td { padding: 10px 12px; }
+}

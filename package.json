@@ -1,0 +1,17 @@
+{
+  "name": "work-log-app",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "install:all": "npm install && npm --prefix server install && npm --prefix client install",
+    "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+    "build": "npm --prefix client install && npm --prefix client run build",
+    "postinstall": "npm --prefix server install",
+    "start": "NODE_ENV=production node server/index.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
