@@ -12,8 +12,9 @@ module.exports = async function handler(req, res) {
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
     const client = google.sheets({ version: 'v4', auth });
-    const meta = await client.spreadsheets.get({ spreadsheetId: process.env.SPREADSHEET_ID });
-    res.json({ ok: true, sheets: meta.data.sheets.map(s => s.properties.title) });
+    const spreadsheetId = process.env.SPREADSHEET_ID;
+    const meta = await client.spreadsheets.get({ spreadsheetId });
+    res.json({ ok: true, spreadsheetId, sheets: meta.data.sheets.map(s => s.properties.title) });
   } catch (e) {
     res.status(500).json({ error: e.message, stack: e.stack });
   }
