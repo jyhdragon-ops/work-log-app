@@ -1,7 +1,9 @@
 module.exports = async function handler(req, res) {
   try {
+    const spreadsheetId = process.env.SPREADSHEET_ID;
     const raw = process.env.GOOGLE_CREDENTIALS;
     if (!raw) return res.json({ error: 'GOOGLE_CREDENTIALS 없음' });
+    if (!spreadsheetId) return res.json({ error: 'SPREADSHEET_ID 없음' });
 
     const json = raw.trim().startsWith('{') ? raw : Buffer.from(raw, 'base64').toString('utf8');
     const creds = JSON.parse(json);
