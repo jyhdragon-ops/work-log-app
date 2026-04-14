@@ -239,6 +239,7 @@ tr:hover td { background: #f8fafc; }
 
 .edit-row td { background: #fffbeb !important; padding: 6px 6px; }
 .edit-row input { padding: 5px 7px; font-size: 13px; min-width: 80px; }
+.edit-row select { padding: 5px 7px; font-size: 13px; min-width: 80px; min-height: unset; }
 
 .action-cell { display: flex; gap: 4px; white-space: nowrap; }
 
@@ -321,8 +322,8 @@ tr:hover td { background: #f8fafc; }
 }
 
 /* ── 열 최소 너비 (품명, 작업내용) ─────────────────────── */
-table th:nth-child(2), table td:nth-child(2) { min-width: 100px; }
-table th:nth-child(4), table td:nth-child(4) { min-width: 120px; white-space: normal; }
+table th:nth-child(2), table td:nth-child(2) { min-width: 110px; }
+table th:nth-child(4), table td:nth-child(4) { min-width: 130px; white-space: normal; }
 
 /* ── Desktop overrides ──────────────────────────────── */
 @media (min-width: 768px) {
