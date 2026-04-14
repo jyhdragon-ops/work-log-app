@@ -20,7 +20,7 @@ module.exports = async function handler(req, res) {
     if (date_from) logs = logs.filter(l => l.date >= date_from);
     if (date_to)   logs = logs.filter(l => l.date <= date_to);
     if (worker)    logs = logs.filter(l => l.worker.includes(worker));
-    logs.sort((a, b) => b.date.localeCompare(a.date) || b.start_time.localeCompare(a.start_time));
+    logs.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
     return res.json(logs);
   }
 
