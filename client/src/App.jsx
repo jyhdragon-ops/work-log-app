@@ -224,12 +224,15 @@ function EditRow({ log, workers, onSave, onCancel }) {
       <td><input type="date" value={form.date} onChange={e => set('date', e.target.value)} /></td>
       <td><input value={form.product_name} onChange={e => set('product_name', e.target.value)} /></td>
       <td>
-        <select value={form.category} onChange={e => set('category', e.target.value)}>
-          <option value="">선택</option>
+        <div className="chip-grid">
           {['생산','청소','문서','셋팅','칭량','입고','불출','반납','기타'].map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
+            <button type="button" key={cat}
+              className={`chip chip-sm ${form.category === cat ? 'active' : ''}`}
+              onClick={() => set('category', form.category === cat ? '' : cat)}>
+              {cat}
+            </button>
           ))}
-        </select>
+        </div>
       </td>
       <td><input value={form.work_content} onChange={e => set('work_content', e.target.value)} /></td>
       <td><input type="text" inputMode="numeric" placeholder="09:00" maxLength={5} value={form.start_time} onChange={e => set('start_time', e.target.value)} /></td>
