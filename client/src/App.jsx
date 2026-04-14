@@ -183,7 +183,7 @@ function FormPage({ workers, onSaved }) {
 }
 
 // ─── 인라인 수정 행 ───────────────────────────────────────
-function EditRow({ log, onSave, onCancel }) {
+function EditRow({ log, workers, onSave, onCancel }) {
   const [form, setForm] = useState({
     date: log.date || '',
     product_name: log.product_name || '',
@@ -196,6 +196,15 @@ function EditRow({ log, onSave, onCancel }) {
     manufacture_date: log.manufacture_date || '',
     notes: log.notes || ''
   })
+
+  const selectedWorkers = form.worker ? form.worker.split(', ').map(w => w.trim()).filter(Boolean) : []
+
+  function toggleWorker(name) {
+    const updated = selectedWorkers.includes(name)
+      ? selectedWorkers.filter(w => w !== name)
+      : [...selectedWorkers, name]
+    setForm(p => ({ ...p, worker: updated.join(', ') }))
+  }
 
   function set(f, v) { setForm(p => ({ ...p, [f]: v })) }
 
@@ -227,7 +236,17 @@ function EditRow({ log, onSave, onCancel }) {
       <td><input type="text" inputMode="numeric" placeholder="18:00" maxLength={5} value={form.end_time} onChange={e => set('end_time', e.target.value)} /></td>
       <td className="center">{t.hours}</td>
       <td className="center">{t.minutes}</td>
-      <td><input value={form.worker} onChange={e => set('worker', e.target.value)} /></td>
+      <td>
+        <div className="chip-grid">
+          {workers.map(w => (
+            <button type="button" key={w.id}
+              className={`chip chip-sm ${selectedWorkers.includes(w.name) ? 'active' : ''}`}
+              onClick={() => toggleWorker(w.name)}>
+              {w.name}
+            </button>
+          ))}
+        </div>
+      </td>
       <td><input value={form.lot_number} onChange={e => set('lot_number', e.target.value)} /></td>
       <td><input type="date" value={form.manufacture_date} onChange={e => set('manufacture_date', e.target.value)} /></td>
       <td><input value={form.notes} onChange={e => set('notes', e.target.value)} /></td>
@@ -319,7 +338,7 @@ function ViewPage({ workers, refreshKey }) {
                 )}
                 {logs.map(log =>
                   editId === log.id
-                    ? <EditRow key={log.id} log={log}
+                    ? <EditRow key={log.id} log={log} workers={workers}
                         onSave={() => { setEditId(null); load() }}
                         onCancel={() => setEditId(null)} />
                     : (

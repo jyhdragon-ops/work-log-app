@@ -240,6 +240,7 @@ tr:hover td { background: #f8fafc; }
 .edit-row td { background: #fffbeb !important; padding: 6px 6px; }
 .edit-row input { padding: 5px 7px; font-size: 13px; min-width: 80px; }
 .edit-row select { padding: 5px 7px; font-size: 13px; min-width: 80px; min-height: unset; }
+.chip-sm { padding: 4px 10px; font-size: 12px; }
 
 .action-cell { display: flex; gap: 4px; white-space: nowrap; }
 
