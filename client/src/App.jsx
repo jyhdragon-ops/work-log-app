@@ -197,15 +197,6 @@ function EditRow({ log, workers, onSave, onCancel }) {
     notes: log.notes || ''
   })
 
-  const selectedWorkers = form.worker ? form.worker.split(', ').map(w => w.trim()).filter(Boolean) : []
-
-  function toggleWorker(name) {
-    const updated = selectedWorkers.includes(name)
-      ? selectedWorkers.filter(w => w !== name)
-      : [...selectedWorkers, name]
-    setForm(p => ({ ...p, worker: updated.join(', ') }))
-  }
-
   function set(f, v) { setForm(p => ({ ...p, [f]: v })) }
 
   async function save() {
@@ -224,15 +215,12 @@ function EditRow({ log, workers, onSave, onCancel }) {
       <td><input type="date" value={form.date} onChange={e => set('date', e.target.value)} /></td>
       <td><input value={form.product_name} onChange={e => set('product_name', e.target.value)} /></td>
       <td>
-        <div className="chip-grid">
+        <select value={form.category} onChange={e => set('category', e.target.value)}>
+          <option value="">선택</option>
           {['생산','청소','문서','셋팅','칭량','입고','불출','반납','기타'].map(cat => (
-            <button type="button" key={cat}
-              className={`chip chip-sm ${form.category === cat ? 'active' : ''}`}
-              onClick={() => set('category', form.category === cat ? '' : cat)}>
-              {cat}
-            </button>
+            <option key={cat} value={cat}>{cat}</option>
           ))}
-        </div>
+        </select>
       </td>
       <td><input value={form.work_content} onChange={e => set('work_content', e.target.value)} /></td>
       <td><input type="text" inputMode="numeric" placeholder="09:00" maxLength={5} value={form.start_time} onChange={e => set('start_time', e.target.value)} /></td>
@@ -240,15 +228,12 @@ function EditRow({ log, workers, onSave, onCancel }) {
       <td className="center">{t.hours}</td>
       <td className="center">{t.minutes}</td>
       <td>
-        <div className="chip-grid">
+        <select value={form.worker} onChange={e => set('worker', e.target.value)}>
+          <option value="">선택</option>
           {workers.map(w => (
-            <button type="button" key={w.id}
-              className={`chip chip-sm ${selectedWorkers.includes(w.name) ? 'active' : ''}`}
-              onClick={() => toggleWorker(w.name)}>
-              {w.name}
-            </button>
+            <option key={w.id} value={w.name}>{w.name}</option>
           ))}
-        </div>
+        </select>
       </td>
       <td><input value={form.lot_number} onChange={e => set('lot_number', e.target.value)} /></td>
       <td><input type="date" value={form.manufacture_date} onChange={e => set('manufacture_date', e.target.value)} /></td>
