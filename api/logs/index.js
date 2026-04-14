@@ -16,11 +16,11 @@ module.exports = async function handler(req, res) {
 
   if (req.method === 'GET') {
     const { date_from, date_to, worker } = req.query;
-    let logs = await sheets.getAllRows('logs', HEADERS);
+    let logs = await sheets.getAllLogsRows(date_from, date_to);
     if (date_from) logs = logs.filter(l => l.date >= date_from);
     if (date_to)   logs = logs.filter(l => l.date <= date_to);
     if (worker)    logs = logs.filter(l => l.worker.includes(worker));
-    logs.sort((a, b) => a.date.localeCompare(b.date) || a.start_time.localeCompare(b.start_time));
+    logs.sort((a, b) => b.date.localeCompare(a.date) || b.start_time.localeCompare(a.start_time));
     return res.json(logs);
   }
 
@@ -45,7 +45,7 @@ module.exports = async function handler(req, res) {
       notes: notes || '',
       created_at: new Date().toISOString(),
     };
-    await sheets.appendRow('logs', HEADERS, data);
+    await sheets.appendLogRow(data);
     return res.status(201).json(data);
   }
 

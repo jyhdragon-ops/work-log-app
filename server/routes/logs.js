@@ -17,7 +17,7 @@ function calcTime(start, end) {
 // GET export (must be before /:id)
 router.get('/export', async (req, res) => {
   const { date_from, date_to } = req.query;
-  let logs = await sheets.getAllRows('logs', HEADERS);
+  let logs = await sheets.getAllLogsRows(date_from, date_to);
   if (date_from) logs = logs.filter(l => l.date >= date_from);
   if (date_to)   logs = logs.filter(l => l.date <= date_to);
   logs.sort((a, b) => a.date.localeCompare(b.date) || a.start_time.localeCompare(b.start_time));
@@ -51,11 +51,11 @@ router.get('/export', async (req, res) => {
 // GET all logs
 router.get('/', async (req, res) => {
   const { date_from, date_to, worker } = req.query;
-  let logs = await sheets.getAllRows('logs', HEADERS);
+  let logs = await sheets.getAllLogsRows(date_from, date_to);
   if (date_from) logs = logs.filter(l => l.date >= date_from);
   if (date_to)   logs = logs.filter(l => l.date <= date_to);
   if (worker)    logs = logs.filter(l => l.worker.includes(worker));
-  logs.sort((a, b) => a.date.localeCompare(b.date) || a.start_time.localeCompare(b.start_time));
+  logs.sort((a, b) => b.date.localeCompare(a.date) || b.start_time.localeCompare(a.start_time));
   res.json(logs);
 });
 
@@ -81,7 +81,7 @@ router.post('/', async (req, res) => {
     notes: notes || '',
     created_at: new Date().toISOString(),
   };
-  await sheets.appendRow('logs', HEADERS, data);
+  await sheets.appendLogRow(data);
   res.status(201).json(data);
 });
 
@@ -107,13 +107,13 @@ router.put('/:id', async (req, res) => {
     notes: notes || '',
     created_at: new Date().toISOString(),
   };
-  await sheets.updateRow('logs', HEADERS, req.params.id, data);
+  await sheets.updateLogRow(req.params.id, data);
   res.json(data);
 });
 
 // DELETE
 router.delete('/:id', async (req, res) => {
-  await sheets.deleteRow('logs', req.params.id);
+  await sheets.deleteLogRow(req.params.id);
   res.json({ success: true });
 });
 

@@ -96,7 +96,7 @@ function FormPage({ workers, onSaved }) {
         <div className="field">
           <label>구분</label>
           <div className="chip-grid">
-            {['생산','청소','문서','칭량','입고','불출','반납','기타'].map(cat => (
+            {['생산','청소','문서','셋팅','칭량','입고','불출','반납','기타'].map(cat => (
               <button type="button" key={cat}
                 className={`chip ${form.category === cat ? 'active' : ''}`}
                 onClick={() => setField('category', form.category === cat ? '' : cat)}>
@@ -214,7 +214,14 @@ function EditRow({ log, onSave, onCancel }) {
     <tr className="edit-row">
       <td><input type="date" value={form.date} onChange={e => set('date', e.target.value)} /></td>
       <td><input value={form.product_name} onChange={e => set('product_name', e.target.value)} /></td>
-      <td><input value={form.category} onChange={e => set('category', e.target.value)} /></td>
+      <td>
+        <select value={form.category} onChange={e => set('category', e.target.value)}>
+          <option value="">선택</option>
+          {['생산','청소','문서','셋팅','칭량','입고','불출','반납','기타'].map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+      </td>
       <td><input value={form.work_content} onChange={e => set('work_content', e.target.value)} /></td>
       <td><input type="text" inputMode="numeric" placeholder="09:00" maxLength={5} value={form.start_time} onChange={e => set('start_time', e.target.value)} /></td>
       <td><input type="text" inputMode="numeric" placeholder="18:00" maxLength={5} value={form.end_time} onChange={e => set('end_time', e.target.value)} /></td>
@@ -235,7 +242,7 @@ function EditRow({ log, onSave, onCancel }) {
 // ─── 일지 조회 ───────────────────────────────────────────
 function ViewPage({ workers, refreshKey }) {
   const [logs, setLogs] = useState([])
-  const [filter, setFilter] = useState({ date_from: thisMonthStart(), date_to: today(), worker: '' })
+  const [filter, setFilter] = useState({ date_from: today(), date_to: today(), worker: '' })
   const [loading, setLoading] = useState(false)
   const [editId, setEditId] = useState(null)
 

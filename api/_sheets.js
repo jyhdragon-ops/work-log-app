@@ -50,9 +50,10 @@ async function ensureSheet(client, sheetName, headers, displayHeaders) {
 
 async function init() {
   const client = await getClient();
-  await ensureSheet(client, 'logs', LOGS_HEADERS, LOGS_DISPLAY_HEADERS);
   await ensureSheet(client, 'workers', WORKERS_HEADERS, WORKERS_DISPLAY_HEADERS);
 }
+
+// ─── workers 전용 (기존 그대로) ──────────────────────────────
 
 async function getAllRows(sheetName, headers) {
   const client = await getClient();
@@ -124,4 +125,137 @@ async function deleteRow(sheetName, id) {
   });
 }
 
-module.exports = { init, getAllRows, appendRow, updateRow, deleteRow, LOGS_HEADERS, WORKERS_HEADERS };
+// ─── 월별 시트 (logs 전용) ────────────────────────────────────
+
+function getMonthsInRange(date_from, date_to) {
+  const from = date_from ? date_from.substring(0, 7) : null;
+  const to = date_to ? date_to.substring(0, 7) : null;
+  if (!from && !to) return null;
+  const start = from || to;
+  const end = to || from;
+  const months = [];
+  let [y, m] = start.split('-').map(Number);
+  const [ey, em] = end.split('-').map(Number);
+  while (y < ey || (y === ey && m <= em)) {
+    months.push(`${y}-${String(m).padStart(2, '0')}`);
+    m++;
+    if (m > 12) { m = 1; y++; }
+  }
+  return months;
+}
+
+async function getAllMonthlySheetNames(client) {
+  const meta = await client.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
+  return meta.data.sheets
+    .map(s => s.properties.title)
+    .filter(t => /^\d{4}-\d{2}$/.test(t));
+}
+
+async function getAllLogsRows(date_from, date_to) {
+  const client = await getClient();
+  const meta = await client.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
+  const existingSheets = new Set(meta.data.sheets.map(s => s.properties.title));
+
+  const targetMonths = getMonthsInRange(date_from, date_to);
+  const monthsToRead = targetMonths
+    ? targetMonths.filter(m => existingSheets.has(m))
+    : [...existingSheets].filter(t => /^\d{4}-\d{2}$/.test(t));
+
+  const allRows = [];
+  for (const month of monthsToRead) {
+    const res = await client.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${month}!A2:Z`,
+    });
+    (res.data.values || []).forEach(row => {
+      const obj = {};
+      LOGS_HEADERS.forEach((h, i) => { obj[h] = row[i] !== undefined ? row[i] : ''; });
+      allRows.push(obj);
+    });
+  }
+  return allRows;
+}
+
+async function appendLogRow(data) {
+  const client = await getClient();
+  const sheetName = data.date.substring(0, 7);
+  await ensureSheet(client, sheetName, LOGS_HEADERS, LOGS_DISPLAY_HEADERS);
+  const row = LOGS_HEADERS.map(h => data[h] !== undefined ? String(data[h]) : '');
+  await client.spreadsheets.values.append({
+    spreadsheetId: SPREADSHEET_ID,
+    range: `${sheetName}!A1`,
+    valueInputOption: 'RAW',
+    requestBody: { values: [row] },
+  });
+}
+
+async function findLogRow(client, id) {
+  const sheetNames = await getAllMonthlySheetNames(client);
+  for (const sheetName of sheetNames) {
+    const res = await client.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${sheetName}!A:A`,
+    });
+    const rows = res.data.values || [];
+    for (let i = 1; i < rows.length; i++) {
+      if (rows[i][0] == id) return { sheetName, rowIndex: i + 1 };
+    }
+  }
+  return null;
+}
+
+async function _deleteRowByLocation(client, sheetName, rowIndex) {
+  const meta = await client.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
+  const sheet = meta.data.sheets.find(s => s.properties.title === sheetName);
+  if (!sheet) return;
+  await client.spreadsheets.batchUpdate({
+    spreadsheetId: SPREADSHEET_ID,
+    requestBody: {
+      requests: [{
+        deleteDimension: {
+          range: {
+            sheetId: sheet.properties.sheetId,
+            dimension: 'ROWS',
+            startIndex: rowIndex - 1,
+            endIndex: rowIndex
+          }
+        }
+      }]
+    },
+  });
+}
+
+async function updateLogRow(id, data) {
+  const client = await getClient();
+  const found = await findLogRow(client, id);
+  if (!found) return;
+  const { sheetName, rowIndex } = found;
+  const newSheet = data.date.substring(0, 7);
+  const row = LOGS_HEADERS.map(h => data[h] !== undefined ? String(data[h]) : '');
+
+  if (sheetName === newSheet) {
+    await client.spreadsheets.values.update({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${sheetName}!A${rowIndex}`,
+      valueInputOption: 'RAW',
+      requestBody: { values: [row] },
+    });
+  } else {
+    await _deleteRowByLocation(client, sheetName, rowIndex);
+    await appendLogRow(data);
+  }
+}
+
+async function deleteLogRow(id) {
+  const client = await getClient();
+  const found = await findLogRow(client, id);
+  if (!found) return;
+  await _deleteRowByLocation(client, found.sheetName, found.rowIndex);
+}
+
+module.exports = {
+  init,
+  getAllRows, appendRow, updateRow, deleteRow,
+  getAllLogsRows, appendLogRow, updateLogRow, deleteLogRow,
+  LOGS_HEADERS, WORKERS_HEADERS
+};

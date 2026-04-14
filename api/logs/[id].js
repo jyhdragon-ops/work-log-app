@@ -36,12 +36,12 @@ module.exports = async function handler(req, res) {
       notes: notes || '',
       created_at: new Date().toISOString(),
     };
-    await sheets.updateRow('logs', HEADERS, id, data);
+    await sheets.updateLogRow(id, data);
     return res.json(data);
   }
 
   if (req.method === 'DELETE') {
-    await sheets.deleteRow('logs', id);
+    await sheets.deleteLogRow(id);
     return res.json({ success: true });
   }
 
