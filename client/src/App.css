@@ -325,6 +325,7 @@ tr:hover td { background: #f8fafc; }
 /* ── 열 최소 너비 (품명, 작업내용) ─────────────────────── */
 table th:nth-child(2), table td:nth-child(2) { min-width: 110px; }
 table th:nth-child(4), table td:nth-child(4) { min-width: 130px; white-space: normal; }
+table th:nth-child(12), table td:nth-child(12) { min-width: 90px; }
 
 /* ── Desktop overrides ──────────────────────────────── */
 @media (min-width: 768px) {
